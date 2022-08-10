@@ -1,0 +1,1 @@
+/usr/bin/c++    -rdynamic CMakeFiles/Astar.dir/source/run.cpp.o  -o Astar liblibrary.a 

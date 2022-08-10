@@ -1,0 +1,4 @@
+/home/mason/Code/Astar/build/CMakeFiles/edit_cache.dir
+/home/mason/Code/Astar/build/CMakeFiles/rebuild_cache.dir
+/home/mason/Code/Astar/build/CMakeFiles/library.dir
+/home/mason/Code/Astar/build/CMakeFiles/Astar.dir

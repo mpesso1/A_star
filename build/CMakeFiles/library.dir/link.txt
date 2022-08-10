@@ -1,0 +1,2 @@
+/usr/bin/ar qc liblibrary.a  CMakeFiles/library.dir/library/Astar.cpp.o CMakeFiles/library.dir/library/A_star.cpp.o
+/usr/bin/ranlib liblibrary.a
