@@ -7,6 +7,8 @@
 #include <bits/stdc++.h>
 #include <queue>
 
+// this code has many bugs, and just used as a refernce refure to A_star.
+
 namespace AstarContainer {
     class Node {
         public:

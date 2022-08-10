@@ -40,11 +40,6 @@ namespace star {
 
             void get_f_cost();
 
-            // bool operator<(Node const&) const;
-
-            // bool operator==(Node* const&) const;
-
-            // ---------
     };
 
     class A_star {
@@ -96,9 +91,6 @@ namespace star {
             std::vector<Eigen::Matrix<float,3,1>> obs;
 
     };
-
-    
-    // bool operator<(const Node&, const Node&);
 }
 
 

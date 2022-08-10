@@ -76,8 +76,6 @@ bool star::A_star::ClosedNodesComparator::operator()(Node* const& a, Node* const
 star::A_star::A_star(Eigen::Matrix<float,3,1> _start_pose, Eigen::Matrix<float, 3, 1> _end_pose, Eigen::Matrix<float,3,Eigen::Dynamic> _obsticals, float _step) : obs_size(_obsticals.cols()){
     int n = 3;
     obsticals.resize(n,_obsticals.cols());
-    // cout << m_to_mm(_obsticals) << endl;
-    // cout << obs_size<< endl;
 
     step = m_to_mm(_step); // UNITS: mm
     
@@ -89,22 +87,13 @@ star::A_star::A_star(Eigen::Matrix<float,3,1> _start_pose, Eigen::Matrix<float, 
         end_pose(i) = shift_point(end_pose(i));
     }
 
-    // cout << "Start pose:" << " " << start_pose << endl;
-    // cout << "End pose:" << " " << end_pose << endl;
-    // cout << "Step:" << " " << step << endl;
-
-    
-
     for (int i=0; i<_obsticals.cols(); i++) {
         for (int j=0; j<3; j++) {
             obsticals(j,i) = m_to_mm(_obsticals(j,i)); // UNITS: mm
             obsticals(j,i) = shift_point(obsticals(j,i));
             // cout << obsticals(j,i) << endl;
         }
-        // cout << obsticals.col(i) << endl;
-        // Each object gets stored with their f_cost = inf
-        // For Objects and start Nodes that should have no parent, the value that gets paired with the key with the key itself... You unlock the door and there is a mirror showing whats behind you which implies you should go back
-        // star::Node* objectNode = new star::Node(obsticals.col(i).transpose(), std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity());
+       
         openNodes[new star::Node(obsticals.col(i).transpose(), std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity())] = new star::Node(obsticals.col(i).transpose(), std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity());;
         bufferNodes[new star::Node(obsticals.col(i), std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity())] = new star::Node(obsticals.col(i), std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity());;
         obs.push_back(obsticals.col(i));
@@ -113,52 +102,35 @@ star::A_star::A_star(Eigen::Matrix<float,3,1> _start_pose, Eigen::Matrix<float, 
             openNodes[new star::Node((*itr).transpose(), std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity())] = new star::Node((*itr).transpose(), std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity());;
             bufferNodes[new star::Node((*itr).transpose(), std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity())] = new star::Node((*itr).transpose(), std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity());;
             obs.push_back((*itr));
+
         }
 
     }
-    // cout << obsticals << endl;
 
 
     star::Node *startNode = new star::Node(start_pose, distance_between(start_pose,end_pose), 0);
     openNodes[startNode], bufferNodes[startNode] = startNode;
 
-    // star::A_star::run();
+    star::A_star::run();
 
-    for( auto tt = obs.begin(); tt != obs.end(); tt++) {
-        cout << (*tt).transpose() << endl;
-    }
-
-    // for(auto it = openNodes.begin(); it!=openNodes.end();it++) {
-    //     cout << it->first->cordinates << endl;
+    // for( auto tt = obs.begin(); tt != obs.end(); tt++) {
+    //     cout << (*tt).transpose() << endl;
     // }
-
 };
-
-// Stop nodes of higher g_cost from being added twice
 
 
 void star::A_star::run() {
-    // for (int i = 0; i < 2; i++) {
     while (true) {
         Node* current_node = openNodes.begin()->first; 
 
-        // if (is_already_closed(current_node)) {
-        //     // cout << "already used\n";
-        //     openNodes.erase(current_node);
-        //     continue;
-        // }
         if (current_node->h_cost < step) {
             closedNodes[current_node] = openNodes[current_node]; // add current node to closed_nodes
-            // cout << "Finished\n";
-            // for (auto i = closedNodes.begin(); i != closedNodes.end(); i++) {
-            //     cout << i->first->cordinates.transpose() << endl;
-            // }
 
             while (true) {
                 final_path.push_back(current_node->cordinates);
 
                 if (current_node->cordinates == start_pose) {
-                    // cout << "at start pose\n";
+
                     break;
                 }
                 else {
@@ -175,17 +147,11 @@ void star::A_star::run() {
         }
 
         openNodes.erase(current_node);
-
-        // cout << openNodes.size() << endl;
-
     }
 
     for (auto i = final_path.begin(); i != final_path.end(); i++) {
         cout << (*i) << endl;
     }
-    // for (auto i=openNodes.begin(); i!=openNodes.end(); i++) {
-    //     cout << i->first->cordinates.transpose() << endl;
-    // }
 
 }
 
@@ -201,8 +167,7 @@ bool star::A_star::is_already_in_bufferNodes(Node* const& node, Node* const& cur
         
             openNodes[itr.first->first]->g_cost = node->g_cost; // update openNodes g cost at this node.  DOES NOT UPDATE THE ORDERING OF OPENNODES... assuming step size is small enough to not notice effect.
             itr.first->first->g_cost = node->g_cost; // update g cost in bufferNodes
-            
-            // No nodes need to be added.  VALUES UPDATED
+
         }
         return true; // No nodes or values need to be added or updated. 
     }
@@ -212,7 +177,7 @@ bool star::A_star::is_already_in_bufferNodes(Node* const& node, Node* const& cur
 void star::A_star::generate_nodes(const std::vector<Eigen::Matrix<float,1,3>>& cords, Node* const& current_node) {
 
     for (int z=0;z<cords.size();z++) {
-        //cout << cords[z] << endl;
+
         Node* test_node = new star::Node(cords[z],distance_between(cords[z],end_pose),current_node->g_cost + distance_between(cords[z], current_node->cordinates));
 
         if (is_already_closed(test_node)) {
@@ -295,12 +260,6 @@ std::vector<Eigen::Matrix<float,1,3>>& star::A_star::look_around(const Eigen::Ma
     
     buffer.erase(buffer.begin()); // erase the node off of list that we are searching around
 
-    // for (int z=0;z< buffer.size();z++) {
-    //     //std::cout << buffer[z] << endl;
-    //     // std::cout << buffer[0][z] << " ";
-    //     // std::cout << buffer[1][z] << " ";
-    //     // std::cout << buffer[2][z] << std::endl;
-    // }
 
     return buffer;
 }

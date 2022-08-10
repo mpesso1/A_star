@@ -8,6 +8,18 @@
 
 using namespace std;
 
+
+
+// this code has many bugs, and just used as a refernce refure to A_star.
+
+
+
+
+
+
+
+
+
 // ---------------------- Node -----------------------------------------------------------------------------------------------
 /*
 Every Node is defined with:
